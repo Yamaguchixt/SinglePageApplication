@@ -30,6 +30,7 @@
  font-family : arial, helvetica, sans-serif;
  font-weight : 800;
  text-align : center;
+ z-index : 2;
  }
 
  .spa-chat-head {
@@ -88,7 +89,7 @@
   height : 2em;
   left : 1em;
   right : 1em;
-  bottom : 1em;
+  bottom : 0em;
   border : thin solid #888;
   background : #888;
  }

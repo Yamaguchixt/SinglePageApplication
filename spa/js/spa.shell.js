@@ -25,12 +25,17 @@ spa.shell = (function () {
 				+ '</div>'
 				+ '<div class="spa-shell-foot"></div>'
 				+ '<div class="spa-shell-modal"></div>',
+			resize_interval : 200
 	},
-	stateMap = { anchor_map : {} },
+	stateMap = {
+			$container  : undefined,
+			anchor_map  : {},
+			resize_idto : undefined
+			},
 	jqueryMap = {},
 
 	copyAnchorMap,		  setJqueryMap,
-	changeAnchorPart, 	onHashchange,
+	changeAnchorPart, 	onHashchange, onResize,
 	setChatAnchor,			initModule;
 	//--------------モジュールスコープ変数終了 -------------------
 
@@ -172,6 +177,19 @@ spa.shell = (function () {
 		return false;
 	};
 	//イベントハンドラ /onHashchange/ 終了
+
+	//イベントハンドラ /onResize /開始
+	onResize = function () {
+		if ( stateMap.resize_idto ) { return true; }
+
+		spa.chat.handleResize();
+		stateMap.resize_idto = setTimeout(
+			function (){ stateMap.resize_idto = undefined ;},
+			configMap.resize_interval
+			);
+		return true;
+	};
+	//イベントハンドラ /onResize /終了
 	//--------------イベントハンドラ終了-------------------------
 
 	//--------------コールバック開始ｰｰｰｰｰｰｰｰｰｰｰｰｰ------------------
@@ -210,6 +228,7 @@ spa.shell = (function () {
 		//
 
 		$(window)
+			.bind( 'resize', onResize )
 			.bind( 'hashchange', onHashchange )
 			.trigger( 'hashchange' );
 

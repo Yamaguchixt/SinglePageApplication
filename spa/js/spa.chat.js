@@ -35,12 +35,14 @@ spa.chat = (function () {
 				set_chat_anchor :true
 		  },
 
-		  slider_open_time 		: 250,
-			slider_close_time 	: 250,
-			slider_opened_em  	: 16,
-			slider_closed_em 		: 2,
-			slider_opened_title : 'Click to close',
-			slider_closed_title : 'Click to open',
+		  slider_open_time 		 : 250,
+			slider_close_time 	 : 250,
+			slider_opened_em  	 : 16,
+			slider_opened_min_em : 10,
+			window_height_min_em : 20,
+			slider_closed_em 		 : 2,
+			slider_opened_title  : 'Click to close',
+			slider_closed_title  : 'Click to open',
 
 			chat_model 			: null,
 			people_model 		: null,
@@ -57,7 +59,8 @@ spa.chat = (function () {
 		jqueryMap = {},
 
 		setJqueryMap, getEmSize, setPxSizes, setSliderPosition,
-		onClickToggle, configModule, initModule
+		onClickToggle, configModule, initModule,
+		removeSlider, handleResize
 		;
 //--------------モジュールスコープ変数終了----------------------
 
@@ -90,11 +93,14 @@ spa.chat = (function () {
 //DOMメソッド /setJqueryMap /終了
 
 //DOMメソッド　/setPxSizes/ 開始
-	setPxsizes = function () {
-		var px_per_em, opened_height_em;
+	setPxSizes = function () {
+		var px_per_em, window_height_em,  opened_height_em;
 		px_per_em = getEmSize( jqueryMap.$slider.get(0) );
-
-		opened_height_em = configMap.slider_opened_em;
+		window_height_em = Math.floor( ( $( window ).height() / px_per_em ) + 0.5);
+		opened_height_em
+			= window_height_em > configMap.window_height_min_em
+			? configMap.slider_opened_em
+			: configMap.slider_opened_min_em;
 
 		stateMap.px_per_em = px_per_em;
 		stateMap.slider_closed_px = configMap.slider_closed_em * px_per_em;
@@ -215,7 +221,7 @@ spa.chat = (function () {
 		$append_target.append( configMap.main_html );
 		stateMap.$append_target = $append_target;
 		setJqueryMap();
-		setPxsizes();
+		setPxSizes();
 
 		//チャットスライダーをデフォルトのタイトルと状態で初期化する
 		jqueryMap.$toggle.prop( 'title', configMap.slider_closed_title );
@@ -225,6 +231,43 @@ spa.chat = (function () {
 		return true;
 	};
 //パブリックメソッド /initModule /終了
+//パブリックメソッド /removeSlider /開始
+	removeSlider = function () {
+		//DOMコンテナを削除する。イベントのバインディングも削除する
+		if ( jqueryMap.$slider ) {
+			jqueryMap.$slider.remove();
+			jqueryMap = {};
+		}
+		stateMap.$appent_target = null;
+		stateMap.position_type = 'closed';
+
+		//主な構成を解除する
+		configMap.chat_model = null;
+		configMap.people_model = null;
+		configMap.set_chat_anchor = null;
+		return true;
+	};
+//パブリックメソッド /removeSlider /終了
+
+//パブリックメソッド /handleReSize /開始
+/* 目的	:	ウィンドウリサイズイベントに対して、モジュールが提供する表示を調整する。
+ * 動作	:	ウィンドウの高さ幅が所定の閾値を下回ったら、縮小したウィンドウサイズに合わせてチャットスライダーのサイズを変更する。
+ * 戻り値　；
+ * 		false -リサイズを考慮していない
+ * 		true  -リサイズを考慮した。
+ */
+ handleResize = function () {
+	 //スライダーコンテナがなにもなければ何もしない
+	 if ( !jqueryMap.$slider ){ return false; }
+
+	 setPxSizes();
+	 if ( stateMap.position_type === 'opened' ){
+		 jqueryMap.$slider.css({ height : stateMap.slider_opened_px });
+	 }
+	 return true;
+ }
+//パブリックメソッド /handleReSize /終了
+
 
 
 
@@ -232,7 +275,9 @@ spa.chat = (function () {
 	return {
 		setSliderPosition : setSliderPosition,
 		configModule 			: configModule,
-		initModule 				: initModule
+		initModule 				: initModule,
+		removeSlier				: removeSlider,
+		handleResize			: handleResize
 	};
 //--------------パブリックメソッド終了--------------------------
 }());
