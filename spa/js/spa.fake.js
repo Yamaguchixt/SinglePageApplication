@@ -3,7 +3,13 @@
 */
 
 spa.fake = ( function () {
-	var getPeopleList;
+	var getPeopleList, fakeIdSerial, makeFakeId, mockSio;
+
+	fakeIdSerial = 5;
+
+	makeFakeId = function () {
+		return 'id' + String ( fakeIdSerial++ );
+	}
 
 	getPeopleList = function () {
 		return [
@@ -18,5 +24,30 @@ spa.fake = ( function () {
 		 ];
 	};
 
-	return { getPeopleList : getPeopleList };
+	mockSio = ( function() {
+		var on_sio, emit_sio, callback_map = {};
+
+		on_sio = function( msg_type, callback ){
+			callback_map[ msg_type ] = callback;
+		};
+
+		emit_sio = function( msg_type, data){
+			if( msg_type === 'adduser' && callback_map.userupdate ){
+				setTimeout( function () {
+					callback_map.userupdate(
+						[{_id : makeFakeId(),
+							 name : data.name,
+							 css_map : data.css_map
+						}]
+					);
+				},3000 );
+			}
+		};
+
+		return { emit :emit_sio, on : on_sio };
+	}());
+
+	return { getPeopleList : getPeopleList,
+					 mockSio : mockSio
+	};
 }());
