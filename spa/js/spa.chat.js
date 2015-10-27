@@ -227,6 +227,7 @@ spa.chat = (function () {
 		jqueryMap.$toggle.prop( 'title', configMap.slider_closed_title );
 		jqueryMap.$head.click( onClickToggle );
 		stateMap.position_type = 'closed';
+		onClickToggle({});
 
 		return true;
 	};

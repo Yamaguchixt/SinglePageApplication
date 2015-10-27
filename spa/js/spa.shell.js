@@ -15,9 +15,11 @@ spa.shell = (function () {
 			},
 			main_html	:	String()
 				+ '<div class="spa-shell-head">'
-					+ '<div class="spa-shell-head-logo"></div>'
+					+ '<div class="spa-shell-head-logo">'
+						+ '<h1>WD課題</h1>'
+						+ '<p>IH12B247_30_山口裕太</p>'
+					+ '</div>'
 					+ '<div class="spa-shell-head-acct"></div>'
-					+ '<div class="spa-shell-head-search"></div>'
 				+ '</div>'
 				+ '<div class="spa-shell-main">'
 					+ '<div class="spa-shell-main-nav"></div>'
@@ -34,8 +36,8 @@ spa.shell = (function () {
 			},
 	jqueryMap = {},
 
-	copyAnchorMap,		  setJqueryMap,
-	changeAnchorPart, 	onHashchange, onResize,
+	copyAnchorMap,		  setJqueryMap,	changeAnchorPart,
+	onHashchange,       onResize,     onTapAcct,        onLogin, onLogout,
 	setChatAnchor,			initModule;
 	//--------------モジュールスコープ変数終了 -------------------
 
@@ -50,8 +52,11 @@ spa.shell = (function () {
 	// DOMメソッド /setJqueryMap/ 開始
 	setJqueryMap = function () {
 		var $container = stateMap.$container;
-		jqueryMap = { $container : $container	};
-
+		jqueryMap = {
+			$container : $container,
+			$acct      : $container.find( '.spa-shell-head-acct' ),
+			$nav			 : $container.find( '.spa-shell-main-nav')
+		};
 	};
 	// DOMメソッド /setJqueryMap/ 終了
 
@@ -190,6 +195,31 @@ spa.shell = (function () {
 		return true;
 	};
 	//イベントハンドラ /onResize /終了
+
+	//イベントハンドラ /onTapAcct /開始
+	onTapAcct = function ( event ){
+		var
+			acct_text, user_name,
+			user = spa.model.people.get_user();
+		if( user.get_is_anon() ){
+			user_name = prompt( 'Please sign-up' );
+			spa.model.people.login( user_name );
+			jqueryMap.$acct.text( '...processing ...');
+		}
+		else {
+			spa.model.people.logout();
+		}
+		return false;
+	};
+	//イベントハンドラ /onTapAcct /終了
+
+	onLogin = function ( event, login_user ){
+		jqueryMap.$acct.text( login_user.name );
+	};
+
+	onLogout = function ( event, logout_user ){
+		jqueryMap.$acct.text( 'Please sign-up' );
+	};
 	//--------------イベントハンドラ終了-------------------------
 
 	//--------------コールバック開始ｰｰｰｰｰｰｰｰｰｰｰｰｰ------------------
@@ -231,6 +261,13 @@ spa.shell = (function () {
 			.bind( 'resize', onResize )
 			.bind( 'hashchange', onHashchange )
 			.trigger( 'hashchange' );
+
+		$.gevent.subscribe( $container, 'spa-login', onLogin );
+		$.gevent.subscribe( $container, 'spa-logout', onLogout );
+
+		 jqueryMap.$acct
+     .text( 'Please sign-up')
+     .bind( 'utap', onTapAcct );
 
 	};
 	// パブリックメソッド /initModule/ 終了
