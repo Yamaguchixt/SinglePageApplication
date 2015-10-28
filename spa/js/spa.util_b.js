@@ -17,8 +17,8 @@ spa.util_b = ( function () {
 			}
 		},
 
-		decodeHtml, encoddeHtml, getEmSize
-	;
+		decodeHtml, encoddeHtml, getEmSize;
+
 
 	configMap.encode_noamp_map = $.extend(
 		{}, configMap.html_encode_map
@@ -30,15 +30,15 @@ spa.util_b = ( function () {
 // decodeHtml開始
 	decodeHtml = function ( str ) {
 		return $( '<div/>' ).html(str || '').text();
-	}
+	};
 // decodeHtml終了
 
 // encodeHtml開始
 	encodeHtml = function ( input_arg_str, exclude_amp ){
 		var
-			input_str = String( input_arg_str ),
-			regex, lookup_map
-		;
+			regex, lookup_map,
+			input_str = String( input_arg_str );
+
 		if( exclude_amp ) {
 			lookup_map = configMap.encode_noamp_map;
 			regex = configMap.regex_encode_noamp;
@@ -47,8 +47,10 @@ spa.util_b = ( function () {
 			lookup_map = configMap.html_encode_map;
 			regex = configMap.regex_encode_html;
 		}
-		return input_str_replace( regex,
+		return input_str.replace( regex,
 			function ( match, name ) {
+				console.log("in encodeHtml match : " + match);
+				console.log("in encodeHtml match : " + name);
 				return lookup_map[ match ] || '';
 			}
 		);
@@ -58,7 +60,7 @@ spa.util_b = ( function () {
 //getEmSize開始
 //emのサイズをピクセルで返す。
 	getEmSize = function ( elem ){
-		return Number( getComputedStyle( elem, '').fontSize.match(/\d*\.?*/)[0] );
+		return Number( getComputedStyle( elem, '').fontSize.match(/\d*\.?\d*/)[0] );
 	};
 //getEmSize終了
 
@@ -71,9 +73,9 @@ spa.util_b = ( function () {
 //--------------イベントハンドラ終了---------------------------
 //--------------パブリックメソッド開始--------------------------
 return {
-	decodeHtml : decodeHtml,
 	encodeHtml : encodeHtml,
-	getEmsize  : getEmSize
+	decodeHtml : decodeHtml,
+	getEmSize  : getEmSize
 };
 //--------------パブリックメソッド終了--------------------------
 }());

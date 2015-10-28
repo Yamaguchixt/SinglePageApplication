@@ -108,6 +108,7 @@ spa.shell = (function () {
 
 		//URIの更新開始。成功しなければ元に戻す。
 		try {
+			console.log("in shell changeAnchorPart anchor_map : "+ anchor_map_revise );
 			$.uriAnchor.setAnchor( anchor_map_revise );
 		} catch ( error ) {
 			//URIを既存の状態に置き換える
@@ -171,7 +172,7 @@ spa.shell = (function () {
 		//スライダーの変更が拒否された場合にアンカーを元に戻す処理を開始
 		if (! is_ok ) {
 			if( anchor_map_previous ){
-				$.uriAnchor.setAnchor( anchor_map_previous, null, ture );
+				$.uriAnchor.setAnchor( anchor_map_previous, null, true );
 				stateMap.anchor_map = anchor_map_previous;
 			} else {
 				delete anchor_map_proposed.chat;
