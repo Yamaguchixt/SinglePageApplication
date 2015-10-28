@@ -13,9 +13,9 @@ spa.fake = ( function () {
 
 	peopleList =  [
 		{ name : 'Betty', _id : '_id_01',	css_map : { top : 20, left : 20, 'background-color' : 'rgb( 128, 128, 128)' }	},
-		{ name : 'Mike', _id : 'id_02', css_map : { top : 60, left : 20,'cackground-color' : 'rgb( 128, 255, 128)'    }	},
-		{ name : 'Yuta', _id : 'id_03', css_map : { top : 100, left : 20,'cackground-color' : 'rgb( 128, 192, 192)'   }	},
-		{ name : 'Alice', _id : 'id_04', css_map : { top : 140, left : 20,'cackground-color' : 'rgb( 192, 128, 128)'  }	}
+		{ name : 'Mike', _id : 'id_02', css_map : { top : 60, left : 20,'background-color' : 'rgb( 128, 255, 128)'    }	},
+		{ name : 'Yuta', _id : 'id_03', css_map : { top : 100, left : 20,'background-color' : 'rgb( 128, 192, 192)'   }	},
+		{ name : 'Alice', _id : 'id_04', css_map : { top : 140, left : 20,'background-color' : 'rgb( 192, 128, 128)'  }	}
 	];
 
 	mockSio = ( function() {
@@ -29,7 +29,7 @@ spa.fake = ( function () {
 		};
 
 		emit_sio = function( msg_type, data){
-			var person_map;
+			var person_map, i;
 
 			if ( msg_type === 'adduser' && callback_map.userupdate ){
 				setTimeout( function () {
@@ -66,6 +66,19 @@ spa.fake = ( function () {
 					listchange_idto = undefined;
 				}
 				send_listchange();
+			}
+
+			//サーバへのupdatevatarメッセージとデータの送信をシミュレートする
+			if ( msg_type === 'updateavatar' && callback_map.listchange ) {
+				//listchangeメッセージの受信をシュミレートする
+				for ( i = 0; i < peopleList.length; i++){
+					if ( peopleList[ i ]._id === data.person_id ) {
+						peopleList[ i ].css_map = data.css_map;
+						break;
+					}
+				}
+				//listchangeメッセージ用のコールバックを実行する
+				callback_map.listchange([ peopleList ]);
 			}
 		};
 
