@@ -37,7 +37,7 @@ spa.chat = (function () {
 
 		  slider_open_time 		 : 250,
 			slider_close_time 	 : 250,
-			slider_opened_em  	 : 16,
+			slider_opened_em  	 : 30,
 			slider_opened_min_em : 10,
 			window_height_min_em : 20,
 			slider_closed_em 		 : 2,
