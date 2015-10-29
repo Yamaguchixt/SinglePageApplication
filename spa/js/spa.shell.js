@@ -253,6 +253,12 @@ spa.shell = (function () {
 		});
 		spa.chat.initModule( jqueryMap.$container );
 
+		spa.avtr.configModule({
+			chat_model : spa.model.chat,
+			people_model : spa.model.people
+		});
+		spa.avtr.initModule( jqueryMap.$nav );
+
 		//URIアンカー変更イベントを処理する
 		//これはすべての機能モジュールを設定して初期化した後に行う。そうしないと、トリガーイベントを処理できる状態になっていない。
 		//トリガーイベントはアンカーがロード状態とみなせることを保証するために使う。
