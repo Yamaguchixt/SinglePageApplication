@@ -56,6 +56,7 @@ spa.shell = (function () {
 			$container : $container,
 			$acct      : $container.find( '.spa-shell-head-acct' ),
 			$nav			 : $container.find( '.spa-shell-main-nav')
+
 		};
 	};
 	// DOMメソッド /setJqueryMap/ 終了
@@ -258,6 +259,9 @@ spa.shell = (function () {
 			people_model : spa.model.people
 		});
 		spa.avtr.initModule( jqueryMap.$nav );
+
+		spa.signup.initModule( jqueryMap.$nav );
+
 
 		//URIアンカー変更イベントを処理する
 		//これはすべての機能モジュールを設定して初期化した後に行う。そうしないと、トリガーイベントを処理できる状態になっていない。
